@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Airport - {% block subtitle %}{% endblock %}</title>
+  </head>
+  <body>
+    <header>
+      <p>
+        Witaj,
+        {% if request.user.username %}
+        {{ request.user.username }}.
+        {% else %}
+        anonymous.
+        {% endif %}
+      </p>
+      {% if request.user.is_authenticated %}
+      <p>
+        <a href="{% url 'logout' %}">Logout</a>
+      </p>
+      {% else %}
+      <form action="{% url 'login' %}" method="POST">
+        {% csrf_token %}
+        <input type="text" name="username" placeholder="Username">
+        <input type="password" name="password" placeholder="Password">
+        <input type="submit" value="Login">
+        or <a href="{% url 'register' %}">Register</a>
+      </form>
+      {% endif %}
+    </header>
+    {% block content %}{% endblock %}
+  </body>
+</html>

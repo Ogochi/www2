@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <title>Airport - {% block subtitle %}{% endblock %}</title>
+  </head>
+  <body>
+    <nav class="navbar navbar-dark bg-dark sticky-top">
+        <a class="navbar-brand" href="{% url 'main' %}">Airport</a>
+        <div>
+            {% if request.user.is_authenticated %}
+            <span style="color: white">
+                Hello, {{ request.user.username }}.
+            </span>
+            <a class="btn btn-secondary" href="{% url 'logout' %}">
+                Logout
+            </a>
+            {% else %}
+            <div class="btn-group nav-item">
+                <a class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">
+                    Register
+                </a>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <form class="px-4 py-3" action="{% url 'register' %}" method="POST">
+                        {% csrf_token %}
+                        <div class="form-group">
+                          <label for="register_username">Username</label>
+                          <input class="form-control" id="register_username" placeholder="Username">
+                        </div>
+                        <div class="form-group">
+                          <label for="register_password">Password</label>
+                          <input type="password" class="form-control" id="register_password" placeholder="Password">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Sign up</button>
+                    </form>
+                </div>
+            </div>
+            <div class="btn-group nav-item">
+                <a class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">
+                    Login
+                </a>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <form class="px-4 py-3" action="{% url 'login' %}" method="POST">
+                        {% csrf_token %}
+                        <div class="form-group">
+                          <label for="login_username">Username</label>
+                          <input class="form-control" id="login_username" placeholder="Username">
+                        </div>
+                        <div class="form-group">
+                          <label for="login_password">Password</label>
+                          <input type="password" class="form-control" id="login_password" placeholder="Password">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Log in</button>
+                    </form>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </nav>
+    <section>
+        {% block content %}{% endblock %}
+    </section>
+    <footer>
+        2018 - Project for "WWW Applications" course during studies at University of Warsaw by Michał Ołtarzewski
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+  </body>
+</html>

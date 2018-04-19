@@ -28,11 +28,11 @@
                         {% csrf_token %}
                         <div class="form-group">
                           <label for="register_username">Username</label>
-                          <input class="form-control" id="register_username" placeholder="Username">
+                          <input type="text" class="form-control" id="register_username" name="username" placeholder="Username">
                         </div>
                         <div class="form-group">
                           <label for="register_password">Password</label>
-                          <input type="password" class="form-control" id="register_password" placeholder="Password">
+                          <input type="password" class="form-control" id="register_password" name="password" placeholder="Password">
                         </div>
                         <button type="submit" class="btn btn-primary">Sign up</button>
                     </form>
@@ -47,11 +47,11 @@
                         {% csrf_token %}
                         <div class="form-group">
                           <label for="login_username">Username</label>
-                          <input class="form-control" id="login_username" placeholder="Username">
+                          <input type="text" class="form-control" id="login_username" name="username" placeholder="Username" />
                         </div>
                         <div class="form-group">
                           <label for="login_password">Password</label>
-                          <input type="password" class="form-control" id="login_password" placeholder="Password">
+                          <input type="password" class="form-control" id="login_password" name="password" placeholder="Password" />
                         </div>
                         <button type="submit" class="btn btn-primary">Log in</button>
                     </form>
@@ -60,6 +60,12 @@
             {% endif %}
         </div>
     </nav>
+    {% if loginError %}
+    Login error
+    {% endif %}
+    {% if registerError %}
+    Register error
+    {% endif %}
     <section>
         {% block content %}{% endblock %}
     </section>

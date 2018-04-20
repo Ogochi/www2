@@ -7,11 +7,11 @@ from django.contrib.auth.models import User
 
 
 def flights_list(request):
-    return render(request, 'flight.html')
+    return render(request, 'main.html')
 
 
 def flight(request, flightId):
-    return HttpResponse("Flight")
+    return render(request, 'flight.html', locals())
 
 
 @require_POST
@@ -22,7 +22,8 @@ def register(request):
         user = User.objects.create_user(
             username=request.POST['username'], password=request.POST['password'])
         login_to_session(request, user)
-    return render(request, 'main.html', locals())
+        registerSuccess = True
+    return render(request, 'accountManagement.html', locals())
 
 
 @require_POST
@@ -30,12 +31,17 @@ def login(request):
     user = authenticate(username=request.POST['username'], password=request.POST['password'])
     if user is not None:
         login_to_session(request, user)
+        loginSuccess = True
     else:
         loginError = True
-    return render(request, 'main.html', locals())
+    return render(request, 'accountManagement.html', locals())
 
 
 def logout(request):
-    djangoLogout(request)
-    return render(request, 'main.html', locals())
+    if request.user.is_authenticated:
+        djangoLogout(request)
+        logoutSuccess = True
+    else:
+        logoutError = True
+    return render(request, 'accountManagement.html', locals())
 

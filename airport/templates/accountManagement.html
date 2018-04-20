@@ -1,0 +1,36 @@
+{% extends 'template.html' %}
+
+{% block subtitle %}Account{% endblock %}
+
+{% block content %}
+    {% if loginError %}
+        <div class="alert alert-danger text-center" role="alert">
+            Log in error, check if username and password are correct!
+        </div>
+    {% endif %}
+    {% if loginSuccess %}
+        <div class="alert alert-success text-center" role="alert">
+            You've successfully logged in!
+        </div>
+    {% endif %}
+    {% if registerError %}
+        <div class="alert alert-danger text-center" role="alert">
+            Register error, there exists already user with such a username!
+        </div>
+    {% endif %}
+    {% if registerSuccess %}
+        <div class="alert alert-success text-center" role="alert">
+            You've successfully registered!
+        </div>
+    {% endif %}
+    {% if logoutError %}
+        <div class="alert alert-danger text-center" role="alert">
+            You can't log out, because you're not logged in!
+        </div>
+    {% endif %}
+    {% if logoutSuccess %}
+        <div class="alert alert-success text-center" role="alert">
+            You've successfully logged out!
+        </div>
+    {% endif %}
+{% endblock %}

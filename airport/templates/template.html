@@ -12,7 +12,7 @@
         <a class="navbar-brand" href="{% url 'main' %}">Airport</a>
         <div>
             {% if request.user.is_authenticated %}
-            <span style="color: white">
+            <span class="text-white">
                 Hello, {{ request.user.username }}.
             </span>
             <a class="btn btn-secondary" href="{% url 'logout' %}">
@@ -60,12 +60,7 @@
             {% endif %}
         </div>
     </nav>
-    {% if loginError %}
-    Login error
-    {% endif %}
-    {% if registerError %}
-    Register error
-    {% endif %}
+
     <section>
         {% block content %}{% endblock %}
     </section>

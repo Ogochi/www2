@@ -3,7 +3,7 @@ from django.views.decorators.http import require_POST
 from django.contrib.auth import authenticate, login as login_to_session
 from django.contrib.auth.views import logout as djangoLogout
 from django.contrib.auth.models import User
-from .models import Flight
+from .models import Flight, Passenger, Ticket
 from datetime import datetime
 from django.db.models import Q
 
@@ -19,6 +19,21 @@ def flights_list(request):
 
 
 def flight(request, flightId):
+    passengers = Passenger.objects.filter(
+        pk__in=Ticket.objects.filter(flight=flightId).values_list('passenger', flat="True"))
+
+    class Detail:
+        def __init__(self, name, value):
+            self.name = name
+            self.value = value
+
+    flight = Flight.objects.get(pk=flightId)
+    details = [Detail("From", flight.startAirport), Detail("To", flight.endAirport),
+               Detail("Departure", flight.startTime), Detail("Arrival", flight.endTime),
+               Detail("Airplane registration number", flight.airplane.registerNumber),
+               Detail("Number of places", flight.airplane.places),
+               Detail("Number of free places", flight.airplane.places - passengers.count())]
+
     return render(request, 'flight.html', locals())
 
 

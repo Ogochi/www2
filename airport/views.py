@@ -6,7 +6,8 @@ from django.contrib.auth.views import logout as djangoLogout
 from django.contrib.auth.models import User
 from .models import Flight, Passenger, Ticket
 from datetime import datetime
-from django.db.models import Q, Count, F
+from django.db.models import Q, Count
+from django.db import transaction
 
 
 def flights_list(request):
@@ -22,8 +23,8 @@ def flights_list(request):
 def flight(request, flightId):
     flight = get_object_or_404(Flight, pk=flightId)
 
-    passengers = Ticket.objects.filter(flight=flightId).values('passenger__name', 'passenger__surname')\
-        .annotate(tickets=Count('passenger'))
+    tickets = Ticket.objects.filter(flight=flightId)
+    passengers = tickets.values('passenger__name', 'passenger__surname').annotate(tickets=Count('passenger'))
 
     class Detail:
         def __init__(self, name, value):
@@ -34,24 +35,26 @@ def flight(request, flightId):
                Detail("Departure", flight.startTime), Detail("Arrival", flight.endTime),
                Detail("Airplane registration number", flight.airplane.registerNumber),
                Detail("Number of places", flight.airplane.places),
-               Detail("Number of free places", flight.airplane.places - passengers.count())]
+               Detail("Number of free places", flight.airplane.places - tickets.count())]
 
     return render(request, 'flight.html', locals())
 
 
+@transaction.atomic
 @require_POST
 def buyTicket(request, flightId):
     if request.user.is_authenticated:
         if Passenger.objects.filter(name=request.POST['name'], surname=request.POST['surname']).exists():
             passenger = Passenger.objects.get(name=request.POST['name'], surname=request.POST['surname'])
         else:
-            passenger = Passenger.objects.reate(name=request.POST['name'], surname=request.POST['surname'])
+            passenger = Passenger.objects.create(name=request.POST['name'], surname=request.POST['surname'])
         Ticket.objects.create(flight=Flight.objects.get(pk=flightId), passenger=passenger)
     else:
         return HttpResponseForbidden()
     return redirect('flight', flightId)
 
 
+@transaction.atomic
 @require_POST
 def register(request):
     if User.objects.all().filter(username=request.POST['username']).exists():

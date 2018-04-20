@@ -46,14 +46,14 @@ class Flight(models.Model):
                     or flight.startTime <= self.endTime <= flight.endTime:
                 raise ValidationError('Airplane can not have two flights in the same time!')
 
-        flightsInStartDay = Flight.objects.filter(
+        flightsInStartDay = Flight.objects.filter(airplane=self.airplane).filter(
             Q(startTime__day=self.startTime.day) | Q(endTime__day=self.startTime.day))
         if flightsInStartDay.values('pk').distinct().count() == 4:
-            raise ValidationError('Can not have more than 4 flights in the same day!')
-        flightsInEndDay = Flight.objects.filter(
+            raise ValidationError('Can not have more than 4 flights in the same day for one airplane!')
+        flightsInEndDay = Flight.objects.filter(airplane=self.airplane).filter(
             Q(startTime__day=self.endTime.day) | Q(endTime__day=self.endTime.day))
         if flightsInEndDay.values('pk').distinct().count() == 4:
-            raise ValidationError('Can not have more than 4 flights in the same day!')
+            raise ValidationError('Can not have more than 4 flights in the same day for one airplane!')
 
     def __str__(self):
         return 'Flight from %s to %s' % (self.startAirport, self.endAirport)

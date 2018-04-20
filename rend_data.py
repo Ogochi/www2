@@ -1,3 +1,6 @@
+# Script for inserting to database random data
+
+
 from airport.models import Airplane, Flight
 from random import randint
 from datetime import datetime as dt, timedelta

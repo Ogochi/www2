@@ -22,7 +22,7 @@
         </thead>
         <tbody>
             {% for flight in flights %}
-                <tr>
+                <tr onclick="window.location.assign('{% url 'flight' flight.pk %}');">
                     <td>{{ flight.startTime }}</td>
                     <td>{{ flight.endTime }}</td>
                     <td>{{ flight.startAirport }}</td>

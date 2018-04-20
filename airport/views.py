@@ -1,13 +1,21 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse
+from django.shortcuts import render, get_object_or_404
 from django.views.decorators.http import require_POST
 from django.contrib.auth import authenticate, login as login_to_session
 from django.contrib.auth.views import logout as djangoLogout
 from django.contrib.auth.models import User
+from .models import Flight
+from datetime import datetime
+from django.db.models import Q
 
 
 def flights_list(request):
-    return render(request, 'main.html')
+    if request.method == 'POST':
+        search = datetime.strptime(request.POST['search'], '%Y-%m-%d')
+        flights = Flight.objects.filter(Q(startTime__day=search.day, startTime__month=search.month) |
+                                        Q(endTime__day=search.day, endTime__month=search.month)).order_by('startTime')
+    else:
+        flights = Flight.objects.all().order_by('startTime')
+    return render(request, 'main.html', locals())
 
 
 def flight(request, flightId):

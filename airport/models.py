@@ -41,16 +41,16 @@ class Flight(models.Model):
         if dateDiff < timedelta(minutes=30):
             raise ValidationError('Flight is shorter than 30 min!')
 
-        for flight in Flight.objects.all().filter(airplane=self.airplane):
+        for flight in Flight.objects.filter(airplane=self.airplane):
             if flight.startTime <= self.startTime <= flight.endTime \
                     or flight.startTime <= self.endTime <= flight.endTime:
                 raise ValidationError('Airplane can not have two flights in the same time!')
 
-        flightsInStartDay = Flight.objects.all().filter(
+        flightsInStartDay = Flight.objects.filter(
             Q(startTime__day=self.startTime.day) | Q(endTime__day=self.startTime.day))
         if flightsInStartDay.values('pk').distinct().count() == 4:
             raise ValidationError('Can not have more than 4 flights in the same day!')
-        flightsInEndDay = Flight.objects.all().filter(
+        flightsInEndDay = Flight.objects.filter(
             Q(startTime__day=self.endTime.day) | Q(endTime__day=self.endTime.day))
         if flightsInEndDay.values('pk').distinct().count() == 4:
             raise ValidationError('Can not have more than 4 flights in the same day!')
@@ -64,7 +64,7 @@ class Ticket(models.Model):
     passenger = models.ForeignKey(Passenger, on_delete=models.CASCADE)
 
     def clean(self):
-        currPassengersNum = Ticket.objects.all().filter(flight=self.flight).count()
+        currPassengersNum = Ticket.objects.filter(flight=self.flight).count()
         airplanePlaces = Flight.objects.get(pk=self.flight.pk).airplane.places
         if currPassengersNum == airplanePlaces:
             raise ValidationError('There are not empty places in airplane!')

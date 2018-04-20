@@ -1,11 +1,12 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
+from django.http import HttpResponseForbidden
 from django.views.decorators.http import require_POST
 from django.contrib.auth import authenticate, login as login_to_session
 from django.contrib.auth.views import logout as djangoLogout
 from django.contrib.auth.models import User
 from .models import Flight, Passenger, Ticket
 from datetime import datetime
-from django.db.models import Q
+from django.db.models import Q, Count, F
 
 
 def flights_list(request):
@@ -19,15 +20,16 @@ def flights_list(request):
 
 
 def flight(request, flightId):
-    passengers = Passenger.objects.filter(
-        pk__in=Ticket.objects.filter(flight=flightId).values_list('passenger', flat="True"))
+    flight = get_object_or_404(Flight, pk=flightId)
+
+    passengers = Ticket.objects.filter(flight=flightId).values('passenger__name', 'passenger__surname')\
+        .annotate(tickets=Count('passenger'))
 
     class Detail:
         def __init__(self, name, value):
             self.name = name
             self.value = value
 
-    flight = Flight.objects.get(pk=flightId)
     details = [Detail("From", flight.startAirport), Detail("To", flight.endAirport),
                Detail("Departure", flight.startTime), Detail("Arrival", flight.endTime),
                Detail("Airplane registration number", flight.airplane.registerNumber),
@@ -35,6 +37,19 @@ def flight(request, flightId):
                Detail("Number of free places", flight.airplane.places - passengers.count())]
 
     return render(request, 'flight.html', locals())
+
+
+@require_POST
+def buyTicket(request, flightId):
+    if request.user.is_authenticated:
+        if Passenger.objects.filter(name=request.POST['name'], surname=request.POST['surname']).exists():
+            passenger = Passenger.objects.get(name=request.POST['name'], surname=request.POST['surname'])
+        else:
+            passenger = Passenger.objects.reate(name=request.POST['name'], surname=request.POST['surname'])
+        Ticket.objects.create(flight=Flight.objects.get(pk=flightId), passenger=passenger)
+    else:
+        return HttpResponseForbidden()
+    return redirect('flight', flightId)
 
 
 @require_POST

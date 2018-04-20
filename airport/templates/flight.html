@@ -21,25 +21,27 @@
                         <tr>
                             <th scope="col">Name</th>
                             <th scope="col">Surname</th>
+                            <th scope="col">Number of tickets</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {{ test }}
                         {% for passenger in passengers %}
                             <tr>
-                                <td>{{ passenger.name }}</td>
-                                <td>{{ passenger.surname }}</td>
+                                <td>{{ passenger.passenger__name }}</td>
+                                <td>{{ passenger.passenger__surname }}</td>
+                                <td>{{ passenger.tickets }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
         </div>
+        {% if request.user.is_authenticated %}
         <div class="row mt-4">
             <div class="col-1"></div>
             <div class="col-10">
                 <header class="h2">Buy ticket for passenger</header>
-                <form action="{% url 'main' %}" method="POST" class="mt-4">
+                <form action="{% url 'buyTicket' flightId %}" method="POST" class="mt-4">
                         {% csrf_token %}
                         <div class="form-group row">
                             <label for="name" class="col-form-label col-sm-2">Name</label>
@@ -62,5 +64,6 @@
             </div>
             <div class="col-1"></div>
         </div>
+        {% endif %}
     </div>
 {% endblock %}

@@ -3,7 +3,7 @@
 {% block subtitle %}Flights List{% endblock %}
 
 {% block content %}
-    <form class="form-group row mt-2 mb-2 ml-auto mr-auto" method="POST" action="{% url 'main' %}">
+    <form class="form-group row mt-2 mb-2 ml-auto mr-auto" method="GET" action="{% url 'main' %}">
         {% csrf_token %}
         <label for="dateInput" class="col-form-label col-2">Search date</label>
         <div class="col-8">

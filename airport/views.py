@@ -10,8 +10,8 @@ from django.db.models import Q, Count, F
 
 
 def flights_list(request):
-    if request.method == 'POST':
-        search = datetime.strptime(request.POST['search'], '%Y-%m-%d')
+    if request.GET.get('search'):
+        search = datetime.strptime(request.GET['search'], '%Y-%m-%d')
         flights = Flight.objects.filter(Q(startTime__day=search.day, startTime__month=search.month) |
                                         Q(endTime__day=search.day, endTime__month=search.month)).order_by('startTime')
     else:

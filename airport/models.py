@@ -35,7 +35,7 @@ class AirplaneCrew(models.Model):
         unique_together = ('captainsName', 'captainsSurname')
 
     def __str__(self):
-        return 'Passenger %s %s' % (self.name, self.surname)
+        return 'AirplaneCrew %s %s' % (self.captainsName, self.captainsSurname)
 
 
 class Flight(models.Model):

@@ -27,12 +27,24 @@ class Passenger(models.Model):
         return 'Passenger %s %s' % (self.name, self.surname)
 
 
+class AirplaneCrew(models.Model):
+    captainsName = models.CharField(max_length=255)
+    captainsSurname = models.CharField(max_length=255)
+
+    class Meta:
+        unique_together = ('captainsName', 'captainsSurname')
+
+    def __str__(self):
+        return 'Passenger %s %s' % (self.name, self.surname)
+
+
 class Flight(models.Model):
     startAirport = models.CharField(max_length=255)
     endAirport = models.CharField(max_length=255)
     startTime = models.DateTimeField()
     endTime = models.DateTimeField()
     airplane = models.ForeignKey(Airplane, on_delete=models.CASCADE)
+    crew = models.ForeignKey(AirplaneCrew, on_delete=models.CASCADE, null=True, blank=True, default=None)
 
     def clean(self):
         if self.endTime < self.startTime:
@@ -41,10 +53,14 @@ class Flight(models.Model):
         if dateDiff < timedelta(minutes=30):
             raise ValidationError('Flight is shorter than 30 min!')
 
-        for flight in Flight.objects.filter(airplane=self.airplane):
-            if flight.startTime <= self.startTime <= flight.endTime \
-                    or flight.startTime <= self.endTime <= flight.endTime:
-                raise ValidationError('Airplane can not have two flights in the same time!')
+        flightsInTheSameTime = Flight.objects.filter(
+            Q(startTime__range=[self.startTime, self.endTime]) |
+            Q(endTime__range=[self.startTime, self.endTime]))
+        if flightsInTheSameTime.filter(airplane=self.airplane).exists():
+            raise ValidationError('Airplane can not have two flights in the same time!')
+
+        if flightsInTheSameTime.filter(crew=self.crew).exists():
+            raise ValidationError('Crew can not have two flights in the same time!')
 
         flightsInStartDay = Flight.objects.filter(airplane=self.airplane).filter(
             Q(startTime__day=self.startTime.day) | Q(endTime__day=self.startTime.day))

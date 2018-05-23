@@ -14,8 +14,80 @@
     <title>Airport - Crews</title>
   </head>
   <body>
+    <nav class="w-100 navbar navbar-dark bg-dark sticky-top">
+        <div>
+            <a class="navbar-brand" href="/">Airport</a>
+            <a class="navbar-brand" href="/static/crews.html">Crews</a>
+        </div>
+        <div>
+            <a class="btn btn-secondary" href="">
+                Logout
+            </a>
+            <div class="btn-group nav-item">
+                <a class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">
+                    Login
+                </a>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <form class="px-4 py-3">
+                        <div class="form-group">
+                          <label for="login_username">Username</label>
+                          <input type="text" class="form-control" id="login_username"
+                                 name="username" placeholder="Username" autocomplete="username" />
+                        </div>
+                        <div class="form-group">
+                          <label for="login_password">Password</label>
+                          <input type="password" class="form-control" id="login_password"
+                                 name="password" placeholder="Password" autocomplete="current-password" />
+                        </div>
+                        <button class="btn btn-primary">Log in</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-
+    <section class="container h-100 m-0 p-0">
+        <div class="row">
+            <div class="col-1"></div>
+            <div class="col-10 align-items-center">
+                <form class="form-group row mt-2 mb-2 ml-auto mr-auto"">
+                    <label for="dateInput" class="col-form-label col-2">Search date</label>
+                    <div class="col-8">
+                        <input type="date" id="dateInput" name="search" class="form-control text-center" />
+                    </div>
+                    <button class="btn btn-primary">Search</button>
+                </form>
+                <section>
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">Flight id</th>
+                                <th scope="col">Crew</th>
+                            </tr>
+                        </thead>
+                        <tbody id="crew_list">
+                        </tbody>
+                    </table>
+                </section>
+                <section class="container">
+                    <header class="h2 align-self-center">Change or assign crew</header>
+                    <form class="justify-content-center container">
+                        <div class="form-group">
+                            <label for="flight_select">Select flight</label>
+                            <select class="form-control" id="flight_select">
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="crew_select">Select crew</label>
+                            <select class="form-control" id="crew_select">
+                            </select>
+                        </div>
+                        <button class="btn btn-primary align-self-center">Submit</button>
+                    </form>
+                </section>
+            <div class="col-1"></div>
+        </div>
+    </section>
 
     <footer class="w-100 text-center text-muted mt-3">
         2018 - Project for "WWW Applications" course during studies at University of Warsaw by Michał Ołtarzewski

@@ -13,8 +13,11 @@
     <title>Airport - {% block subtitle %}{% endblock %}</title>
   </head>
   <body>
-    <nav class="navbar navbar-dark bg-dark sticky-top">
-        <a class="navbar-brand" href="{% url 'main' %}">Airport</a>
+    <nav class="w-100 navbar navbar-dark bg-dark sticky-top">
+        <div>
+            <a class="navbar-brand" href="{% url 'main' %}">Airport</a>
+            <a class="navbar-brand" href="/static/crews.html">Crews</a>
+        </div>
         <div>
             {% if request.user.is_authenticated %}
             <span class="text-white">

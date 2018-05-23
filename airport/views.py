@@ -10,6 +10,14 @@ from django.db import transaction
 from django.core.exceptions import ValidationError
 
 
+def get_crews(request):
+    return HttpResponseForbidden()
+
+
+def change_flight_crew(request):
+    return HttpResponseForbidden()
+
+
 def flights_list(request):
     if request.GET.get('search'):
         search = datetime.strptime(request.GET['search'], '%Y-%m-%d')

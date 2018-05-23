@@ -1,13 +1,13 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseForbidden
 from django.views.decorators.http import require_POST
-from django.contrib.auth import authenticate, login as login_to_session
-from django.contrib.auth.views import logout as djangoLogout
+from django.contrib.auth import authenticate, login as login_to_session, logout
 from django.contrib.auth.models import User
 from .models import Flight, Passenger, Ticket
 from datetime import datetime
 from django.db.models import Q, Count
 from django.db import transaction
+from django.core.exceptions import ValidationError
 
 
 def flights_list(request):
@@ -48,7 +48,12 @@ def buyTicket(request, flightId):
             passenger = Passenger.objects.get(name=request.POST['name'], surname=request.POST['surname'])
         else:
             passenger = Passenger.objects.create(name=request.POST['name'], surname=request.POST['surname'])
-        Ticket.objects.create(flight=Flight.objects.get(pk=flightId), passenger=passenger)
+        t = Ticket(flight=Flight.objects.get(pk=flightId), passenger=passenger)
+        try:
+            t.full_clean()
+            t.save()
+        except ValidationError:
+            pass
     else:
         return HttpResponseForbidden()
     return redirect('flight', flightId)
@@ -80,7 +85,7 @@ def login(request):
 
 def logout(request):
     if request.user.is_authenticated:
-        djangoLogout(request)
+        logout(request)
         logoutSuccess = True
     else:
         logoutError = True

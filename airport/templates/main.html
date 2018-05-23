@@ -7,7 +7,7 @@
         {% csrf_token %}
         <label for="dateInput" class="col-form-label col-2">Search date</label>
         <div class="col-8">
-            <input type="date" id="dateInput" name="search" class="form-control text-center" value="2018-01-01" />
+            <input type="date" id="dateInput" name="search" class="form-control text-center" />
         </div>
         <button class="btn btn-primary" type="submit" href="{% url 'main' %}">Search</button>
     </form>

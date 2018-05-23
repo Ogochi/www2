@@ -53,7 +53,8 @@ class Flight(models.Model):
         if dateDiff < timedelta(minutes=30):
             raise ValidationError('Flight is shorter than 30 min!')
 
-        flightsInTheSameTime = Flight.objects.filter(
+        flights = Flight.objects.exclude(pk=self.pk)
+        flightsInTheSameTime = flights.filter(
             Q(startTime__range=[self.startTime, self.endTime]) |
             Q(endTime__range=[self.startTime, self.endTime]))
         if flightsInTheSameTime.filter(airplane=self.airplane).exists():
@@ -62,11 +63,11 @@ class Flight(models.Model):
         if flightsInTheSameTime.filter(crew=self.crew).exists():
             raise ValidationError('Crew can not have two flights in the same time!')
 
-        flightsInStartDay = Flight.objects.filter(airplane=self.airplane).filter(
+        flightsInStartDay = flights.objects.filter(airplane=self.airplane).filter(
             Q(startTime__day=self.startTime.day) | Q(endTime__day=self.startTime.day))
         if flightsInStartDay.values('pk').distinct().count() == 4:
             raise ValidationError('Can not have more than 4 flights in the same day for one airplane!')
-        flightsInEndDay = Flight.objects.filter(airplane=self.airplane).filter(
+        flightsInEndDay = flights.objects.filter(airplane=self.airplane).filter(
             Q(startTime__day=self.endTime.day) | Q(endTime__day=self.endTime.day))
         if flightsInEndDay.values('pk').distinct().count() == 4:
             raise ValidationError('Can not have more than 4 flights in the same day for one airplane!')

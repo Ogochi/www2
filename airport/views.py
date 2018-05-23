@@ -1,21 +1,50 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseForbidden
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_GET
 from django.contrib.auth import authenticate, login as login_to_session, logout
 from django.contrib.auth.models import User
-from .models import Flight, Passenger, Ticket
+from .models import Flight, Passenger, Ticket, AirplaneCrew
 from datetime import datetime
 from django.db.models import Q, Count
 from django.db import transaction
 from django.core.exceptions import ValidationError
+from django.core.exceptions import PermissionDenied
+from django.http import HttpResponse, JsonResponse
 
 
+@require_GET
 def get_crews(request):
-    return HttpResponseForbidden()
+    if 'day' not in request.GET or 'month' not in request.GET or 'year' not in request.GET:
+        raise PermissionDenied
+
+    response = []
+    filteredFlights = Flight.objects.filter(
+        Q(startTime__day=request.GET['day'], startTime__month=request.GET['month'],startTime__year=request.GET['year']) |
+        Q(endTime__day=request.GET['day'], endTime__month=request.GET['month'], endTime__year=request.GET['year']))
+    for flight in filteredFlights.filter(crew__isnull=False):
+        response.append({'flightId': flight.pk})
+    return JsonResponse({'crews': response})
 
 
+@require_POST
 def change_flight_crew(request):
-    return HttpResponseForbidden()
+    if 'flightId' not in request.POST or 'captainsName' not in request.POST or 'captainsSurname' not in request.POST:
+        raise PermissionDenied
+
+    crew = AirplaneCrew.objects.filter(captainsName=request.POST['captainsName'],
+                                       captainsSurname=request.POST['captainsSurname'])
+    flight = Flight.objects.filter(pk=request.POST['flightId'])
+    if not crew.exists() or not flight.exists():
+        raise PermissionDenied
+
+    flight = flight[0]
+    flight.crew = crew
+    try:
+        flight.full_clean()
+        flight.save()
+    except ValidationError:
+        raise PermissionDenied
+    return HttpResponse()
 
 
 def flights_list(request):
@@ -39,7 +68,8 @@ def flight(request, flightId):
             self.name = name
             self.value = value
 
-    details = [Detail("From", flight.startAirport), Detail("To", flight.endAirport),
+    details = [Detail("Flight id", flight.pk),
+               Detail("From", flight.startAirport), Detail("To", flight.endAirport),
                Detail("Departure", flight.startTime), Detail("Arrival", flight.endTime),
                Detail("Airplane registration number", flight.airplane.registerNumber),
                Detail("Number of places", flight.airplane.places),

@@ -1,5 +1,6 @@
 function displayList() {
     let date = $('#dateInput').val();
+    $('#crew_list').empty();
 
     $.ajax({
         url: '/api/get_crews/',
@@ -7,6 +8,7 @@ function displayList() {
         data: {
             day: date.slice(8, 10),
             month: date.slice(5, 7),
+            year: date.slice(0, 4),
         },
         success: res => {
             res['crews'].forEach(x =>
@@ -22,7 +24,7 @@ function displayList() {
 }
 
 function assignCrew() {
-    let flight = $('#flight_select').val();
+    let flight = $('#flight_select').val().split(" ")[1];
     let crew = $('#crew_select').val().split(" ");
 
     $.post('/api/change_flight_crew/', {
@@ -30,10 +32,17 @@ function assignCrew() {
         captainsName: crew[0],
         captainsSurname: crew[1],
     }, res => {
-        console.log(res);
+        $('#alerts').empty().append(
+            $('<div class="alert alert-success text-center" role="alert">\n' +
+                '                You\'ve successfully assigned crew!\n' +
+                '            </div>')
+        );
     }).fail((err) => {
-        //console.log(err);
-        console.log("Couldn't assign crew!");
+        $('#alerts').empty().append(
+            $('<div class="alert alert-danger text-center" role="alert">\n' +
+                '                Error - couldn\'t assign crew!\n' +
+                '            </div>')
+        );
     });
 }
 
@@ -41,9 +50,10 @@ function fillSelectInputs() {
     $.get('/api/get_flights_and_crews/', res => {
         res['flights'].forEach(flight =>
             $('#flight_select').append(
-                $('<option>' + "id: " + flight.id + ", " +
+                $('<option>' + "id: " + flight.id + " | " +
                     flight.startAirport + "-" + flight.endAirport + ", " +
-                    flight.startTime.slice(0, 10) + " -> " + flight.endTime.slice(0, 10) + '</option>')
+                    flight.startTime.slice(0, 10) + " " + flight.startTime.slice(11, 19) +
+                    " -> " + flight.endTime.slice(0, 10) + " " + flight.endTime.slice(11, 19) + '</option>')
             )
         );
         res['crews'].forEach(crew =>

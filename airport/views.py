@@ -27,13 +27,15 @@ def get_flights_and_crews(request):
 @require_GET
 @csrf_exempt
 def get_crews(request):
-    if 'day' not in request.GET or 'month' not in request.GET:
+    if 'day' not in request.GET or 'month' not in request.GET or 'year' not in request.GET:
         raise PermissionDenied
 
     response = []
     filteredFlights = Flight.objects.filter(
-        Q(startTime__day=request.GET['day'], startTime__month=request.GET['month']) |
-        Q(endTime__day=request.GET['day'], endTime__month=request.GET['month']))
+        Q(startTime__day=request.GET['day'], startTime__month=request.GET['month'],
+          startTime__year=request.GET['year']) |
+        Q(endTime__day=request.GET['day'], endTime__month=request.GET['month'],
+          endTime__year=request.GET['year']))
     for flight in filteredFlights.filter(crew__isnull=False):
         response.append({'flightId': flight.pk, 'crew': flight.crew.captainsName + " " + flight.crew.captainsSurname})
     return JsonResponse({'crews': response})

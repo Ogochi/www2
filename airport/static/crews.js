@@ -31,6 +31,8 @@ function assignCrew() {
         flightId: flight,
         captainsName: crew[0],
         captainsSurname: crew[1],
+        username: window.localStorage.getItem("username"),
+        password: window.localStorage.getItem("password"),
     }, res => {
         $('#alerts').empty().append(
             $('<div class="alert alert-success text-center" role="alert">\n' +
@@ -40,7 +42,7 @@ function assignCrew() {
     }).fail((err) => {
         $('#alerts').empty().append(
             $('<div class="alert alert-danger text-center" role="alert">\n' +
-                'Error - couldn\'t assign crew!\n' +
+                'Error - couldn\'t assign crew! You have to be logged in!\n' +
                 '</div>')
         );
     });

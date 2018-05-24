@@ -20,15 +20,18 @@
             <a class="navbar-brand" href="/static/crews.html">Crews</a>
         </div>
         <div>
-            <a class="btn btn-secondary" href="">
-                Logout
-            </a>
-            <div class="btn-group nav-item">
+            <div id="logged_in" style="display: none">
+                <span class="text-white" id="hello"></span>
+                <a class="btn btn-secondary" id="logout_button">
+                    Logout
+                </a>
+            </div>
+            <div class="btn-group nav-item" id="login_form">
                 <a class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">
                     Login
                 </a>
                 <div class="dropdown-menu dropdown-menu-right">
-                    <form class="px-4 py-3">
+                    <div class="px-4 py-3">
                         <div class="form-group">
                           <label for="login_username">Username</label>
                           <input type="text" class="form-control" id="login_username"
@@ -39,8 +42,8 @@
                           <input type="password" class="form-control" id="login_password"
                                  name="password" placeholder="Password" autocomplete="current-password" />
                         </div>
-                        <button class="btn btn-primary">Log in</button>
-                    </form>
+                        <button class="btn btn-primary" id="login_button">Log in</button>
+                    </div>
                 </div>
             </div>
         </div>

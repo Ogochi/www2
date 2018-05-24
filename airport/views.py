@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseForbidden
 from django.views.decorators.http import require_POST, require_GET
-from django.contrib.auth import authenticate, login as login_to_session, logout
+from django.contrib.auth import authenticate, login as login_to_session, logout as logoutUser
 from django.contrib.auth.models import User
 from .models import Flight, Passenger, Ticket, AirplaneCrew, Airplane
 from datetime import datetime
@@ -43,6 +43,7 @@ def get_crews(request):
 
 @require_POST
 @csrf_exempt
+@transaction.atomic
 def change_flight_crew(request):
     if 'flightId' not in request.POST or 'captainsName' not in request.POST or 'captainsSurname' not in request.POST:
         raise PermissionDenied
@@ -139,9 +140,19 @@ def login(request):
 
 def logout(request):
     if request.user.is_authenticated:
-        logout(request)
+        logoutUser(request)
         logoutSuccess = True
     else:
         logoutError = True
     return render(request, 'accountManagement.html', locals())
 
+
+@require_POST
+@csrf_exempt
+def login_api(request):
+    if 'username' not in request.POST or 'password' not in request.POST:
+        raise PermissionDenied
+    user = authenticate(username=request.POST['username'], password=request.POST['password'])
+    if user is None:
+        raise PermissionDenied
+    return HttpResponse()

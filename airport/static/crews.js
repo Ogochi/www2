@@ -66,45 +66,51 @@ function fillSelectInputs() {
     });
 }
 
-// function displayMessage(message) {
-//     $('#chat > ul').append(
-//         $('<li>' + message + '</li>')
-//     );
-//     $("#chat").scrollTop($('#chat > ul').height());
-// }
-//
-// function displayChat(messages) {
-//     $('#chat > ul').empty();
-//     for (var i in messages) {
-//         displayMessage(messages[i].user__username + ': ' + messages[i].content);
-//     }
-// }
-//
-// function getAndDisplayChat() {
-//     $.get('/ajax/get_chat/', function(res) {
-//         console.log('chat messages received');
-//         displayChat(res.chat);
-//     }).fail(function() {
-//         console.log('retrieving chat messages failed');
-//     });
-// }
+function login(showAlert) {
+    $.post('/api/login/', {
+        username: window.localStorage.getItem("username"),
+        password: window.localStorage.getItem("password"),
+    }, () => {
+        if (showAlert) {
+            $('#alerts').empty().append(
+                $('<div class="alert alert-success text-center" role="alert">\n' +
+                    'You\'ve successfully logged in!\n' +
+                    '</div>')
+            );
+        }
+        $('#hello').append(`Hello, ${window.localStorage.getItem("username")}.`);
+        $('#logged_in').css("display", "");
+        $('#login_form').css("display", "none");
+    }).fail(() => {
+        if (showAlert) {
+            $('#alerts').empty().append(
+                $('<div class="alert alert-danger text-center" role="alert">\n' +
+                    'Log in error, check if username and password are correct!\n' +
+                    '</div>')
+            );
+        }
+    });
+}
 
-$().ready(function() {
+$().ready(() => {
+    login(false);
     fillSelectInputs();
     $('#search_crews').click(displayList);
-    $('#change_crew_assignment').click(assignCrew)
-    // getAndDisplayChat();
-    //
-    // setInterval(getAndDisplayChat, 3000);
-    //
-    // $('#send-button').click(function() {
-    //     $.post('/ajax/send_chat_message/', {
-    //         'message': $('#message-form input').val(),
-    //     }, function() {
-    //         console.log('chat message sent');
-    //         getAndDisplayChat();
-    //     }).fail(function() {
-    //         console.log('sending chat message failed');
-    //     });
-    // });
+    $('#change_crew_assignment').click(assignCrew);
+    $('#login_button').click(() => {
+        window.localStorage.setItem("username", $('#login_username').val());
+        window.localStorage.setItem("password", $('#login_password').val());
+        login(true);
+    });
+    $('#logout_button').click(() => {
+        window.localStorage.removeItem("username");
+        window.localStorage.removeItem("password");
+        $('#alerts').empty().append(
+                $('<div class="alert alert-success text-center" role="alert">\n' +
+                    'You\'ve successfully logged out!\n' +
+                    '</div>')
+            );
+        $('#logged_in').css("display", "none");
+        $('#login_form').css("display", "");
+    })
 });

@@ -34,14 +34,14 @@ function assignCrew() {
     }, res => {
         $('#alerts').empty().append(
             $('<div class="alert alert-success text-center" role="alert">\n' +
-                '                You\'ve successfully assigned crew!\n' +
-                '            </div>')
+                'You\'ve successfully assigned crew!\n' +
+                '</div>')
         );
     }).fail((err) => {
         $('#alerts').empty().append(
             $('<div class="alert alert-danger text-center" role="alert">\n' +
-                '                Error - couldn\'t assign crew!\n' +
-                '            </div>')
+                'Error - couldn\'t assign crew!\n' +
+                '</div>')
         );
     });
 }
@@ -50,10 +50,10 @@ function fillSelectInputs() {
     $.get('/api/get_flights_and_crews/', res => {
         res['flights'].forEach(flight =>
             $('#flight_select').append(
-                $('<option>' + "id: " + flight.id + " | " +
-                    flight.startAirport + "-" + flight.endAirport + ", " +
-                    flight.startTime.slice(0, 10) + " " + flight.startTime.slice(11, 19) +
-                    " -> " + flight.endTime.slice(0, 10) + " " + flight.endTime.slice(11, 19) + '</option>')
+                $('<option>' + "id: " + flight.id + " | " + flight.startTime.slice(0, 10) + " " +
+                    flight.startTime.slice(11, 19) + " " +flight.startAirport + " -> " +
+                    flight.endTime.slice(0, 10) + " " + flight.endTime.slice(11, 19) + " " +
+                    flight.endAirport + '</option>')
             )
         );
         res['crews'].forEach(crew =>

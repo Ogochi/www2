@@ -3,30 +3,44 @@ from django.http import HttpResponseForbidden
 from django.views.decorators.http import require_POST, require_GET
 from django.contrib.auth import authenticate, login as login_to_session, logout
 from django.contrib.auth.models import User
-from .models import Flight, Passenger, Ticket, AirplaneCrew
+from .models import Flight, Passenger, Ticket, AirplaneCrew, Airplane
 from datetime import datetime
-from django.db.models import Q, Count
+from django.db.models import Value as V, Q, Count
+from django.db.models.functions import Concat
 from django.db import transaction
 from django.core.exceptions import ValidationError
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 
 @require_GET
+@csrf_exempt
+def get_flights_and_crews(request):
+    return JsonResponse({
+        'crews': list(AirplaneCrew.objects.all()
+                      .annotate(name=Concat('captainsName', V(" "), 'captainsSurname')).values('name')),
+        'flights': list(Flight.objects.values('id', 'startAirport', 'endAirport', 'startTime', 'endTime'))
+    })
+
+
+@require_GET
+@csrf_exempt
 def get_crews(request):
-    if 'day' not in request.GET or 'month' not in request.GET or 'year' not in request.GET:
+    if 'day' not in request.GET or 'month' not in request.GET:
         raise PermissionDenied
 
     response = []
     filteredFlights = Flight.objects.filter(
-        Q(startTime__day=request.GET['day'], startTime__month=request.GET['month'],startTime__year=request.GET['year']) |
-        Q(endTime__day=request.GET['day'], endTime__month=request.GET['month'], endTime__year=request.GET['year']))
+        Q(startTime__day=request.GET['day'], startTime__month=request.GET['month']) |
+        Q(endTime__day=request.GET['day'], endTime__month=request.GET['month']))
     for flight in filteredFlights.filter(crew__isnull=False):
-        response.append({'flightId': flight.pk})
+        response.append({'flightId': flight.pk, 'crew': flight.crew.captainsName + " " + flight.crew.captainsSurname})
     return JsonResponse({'crews': response})
 
 
 @require_POST
+@csrf_exempt
 def change_flight_crew(request):
     if 'flightId' not in request.POST or 'captainsName' not in request.POST or 'captainsSurname' not in request.POST:
         raise PermissionDenied
@@ -38,7 +52,7 @@ def change_flight_crew(request):
         raise PermissionDenied
 
     flight = flight[0]
-    flight.crew = crew
+    flight.crew = crew[0]
     try:
         flight.full_clean()
         flight.save()

@@ -63,11 +63,11 @@ class Flight(models.Model):
         if flightsInTheSameTime.filter(crew=self.crew).exists():
             raise ValidationError('Crew can not have two flights in the same time!')
 
-        flightsInStartDay = flights.objects.filter(airplane=self.airplane).filter(
+        flightsInStartDay = flights.filter(airplane=self.airplane).filter(
             Q(startTime__day=self.startTime.day) | Q(endTime__day=self.startTime.day))
         if flightsInStartDay.values('pk').distinct().count() == 4:
             raise ValidationError('Can not have more than 4 flights in the same day for one airplane!')
-        flightsInEndDay = flights.objects.filter(airplane=self.airplane).filter(
+        flightsInEndDay = flights.filter(airplane=self.airplane).filter(
             Q(startTime__day=self.endTime.day) | Q(endTime__day=self.endTime.day))
         if flightsInEndDay.values('pk').distinct().count() == 4:
             raise ValidationError('Can not have more than 4 flights in the same day for one airplane!')

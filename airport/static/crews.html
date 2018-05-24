@@ -6,10 +6,10 @@
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
 
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
-    <script src="/static/crews.js"></script>
+    <script src="crews.js"></script>
 
     <title>Airport - Crews</title>
   </head>
@@ -50,13 +50,13 @@
         <div class="row">
             <div class="col-1"></div>
             <div class="col-10 align-items-center">
-                <form class="form-group row mt-2 mb-2 ml-auto mr-auto"">
+                <div class="form-group row mt-2 mb-2 ml-auto mr-auto"">
                     <label for="dateInput" class="col-form-label col-2">Search date</label>
                     <div class="col-8">
                         <input type="date" id="dateInput" name="search" class="form-control text-center" />
                     </div>
-                    <button class="btn btn-primary">Search</button>
-                </form>
+                    <button class="btn btn-primary" id="search_crews">Search</button>
+                </div>
                 <section>
                     <table class="table table-hover">
                         <thead>
@@ -71,7 +71,7 @@
                 </section>
                 <section class="container">
                     <header class="h2 align-self-center">Change or assign crew</header>
-                    <form class="justify-content-center container">
+                    <div class="justify-content-center container">
                         <div class="form-group">
                             <label for="flight_select">Select flight</label>
                             <select class="form-control" id="flight_select">
@@ -82,8 +82,8 @@
                             <select class="form-control" id="crew_select">
                             </select>
                         </div>
-                        <button class="btn btn-primary align-self-center">Submit</button>
-                    </form>
+                        <button class="btn btn-primary align-self-center" id="change_crew_assignment">Submit</button>
+                    </div>
                 </section>
             <div class="col-1"></div>
         </div>

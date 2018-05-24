@@ -10,6 +10,7 @@ urlpatterns = [
     path('register/', airport.views.register, name='register'),
     path('logout/', airport.views.logout, name='logout'),
     re_path(r'buyTicket/([0-9]+)/', airport.views.buyTicket, name="buyTicket"),
-    path('api/get_crews', airport.views.get_crews, name='get_crews'),
-    path('api/change_flight_crew', airport.views.change_flight_crew, name='change_flight_crew'),
+    path('api/get_crews/', airport.views.get_crews, name='get_crews'),
+    path('api/change_flight_crew/', airport.views.change_flight_crew, name='change_flight_crew'),
+    path('api/get_flights_and_crews/', airport.views.get_flights_and_crews, name='get_flights_and_crews'),
 ]

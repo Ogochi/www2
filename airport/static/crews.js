@@ -41,7 +41,7 @@ function assignCrew() {
         );
     }).fail((err) => {
         $('#alerts').empty().append(
-            $('<div class="alert alert-danger text-center" role="alert">\n' +
+            $('<div id="error_alert" class="alert alert-danger text-center" role="alert">\n' +
                 'Error - couldn\'t assign crew! You have to be logged in!\n' +
                 '</div>')
         );
@@ -52,7 +52,8 @@ function fillSelectInputs() {
     $.get('/api/get_flights_and_crews/', res => {
         res['flights'].forEach(flight =>
             $('#flight_select').append(
-                $('<option>' + "id: " + flight.id + " | " + flight.startTime.slice(0, 10) + " " +
+                $('<option id="flight_option' + flight.id + '">id: ' + flight.id + " | " +
+                    flight.startTime.slice(0, 10) + " " +
                     flight.startTime.slice(11, 19) + " " +flight.startAirport + " -> " +
                     flight.endTime.slice(0, 10) + " " + flight.endTime.slice(11, 19) + " " +
                     flight.endAirport + '</option>')
